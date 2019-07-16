@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">WeatherTest</string>
+    <string name="title">Weather for today!</string>
+    <string name="city_name">Name of the City!</string>
+    <string name="temperature">Temperature:</string>
+    <string name="title_activity_main_screen">main_screen</string>
+    <string name="id_add">Add City</string>
+    <string name="cancel">Cancel</string>
+    <string name="enter_id">Enter ID of city</string>
+
+</resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/item_height"
+    android:orientation="horizontal"
+    android:padding="@dimen/item_padding">
+
+    <ImageView
+
+        android:id="@+id/iconWeather"
+        android:layout_width="@dimen/avatar_size"
+        android:layout_height="@dimen/avatar_size"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        tools:src="@tools:sample/avatars" />
+
+
+    <TextView
+        android:id="@+id/nameCity"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/name_horizontal_padding"
+        android:layout_marginEnd="@dimen/name_horizontal_padding"
+        android:layout_weight="2"
+        android:gravity="center_vertical"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        tools:text="Saint Petersburg" />
+    <TextView
+        android:id="@+id/tempCity"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        tools:text="27,0 °C"
+        android:layout_marginRight="@dimen/name_horizontal_padding" />
+
+
+
+</LinearLayout>
