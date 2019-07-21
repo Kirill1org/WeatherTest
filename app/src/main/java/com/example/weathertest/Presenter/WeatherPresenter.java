@@ -123,6 +123,7 @@ public class WeatherPresenter implements IWeatherPresenter {
                 Double.toString(Math.round(weatherObjectUnit.getMain().getPressure() / 1.333))));
 
         weatherView.showWeatherData(weatherObjectList);
+
         addCityIdToString(weatherObjectUnit.getId().toString());
 
 
