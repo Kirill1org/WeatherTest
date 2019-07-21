@@ -3,8 +3,8 @@ package com.example.weathertest.Presenter;
 import com.example.weathertest.Model.NetworkModule;
 import com.example.weathertest.Model.WeatherService;
 import com.example.weathertest.ResponseDAO.WeatherCity;
-import com.example.weathertest.ResponseDAO.WeatherObject;
-import com.example.weathertest.View.IDialogFragment;
+import com.example.weathertest.ResponseDAO.WeatherObjectList;
+import com.example.weathertest.ResponseDAO.WeatherObjectUnit;
 import com.example.weathertest.View.IWeatherView;
 
 import java.util.ArrayList;
@@ -17,8 +17,7 @@ import io.reactivex.schedulers.Schedulers;
 public class WeatherPresenter implements IWeatherPresenter {
 
     private IWeatherView weatherView;
-    private IDialogFragment dialogFragment;
-    private static String stringIDCitys;
+    private static String stringIDCities;
 
     private List<WeatherCity> weatherObjectList = new ArrayList<>();
 
@@ -26,19 +25,20 @@ public class WeatherPresenter implements IWeatherPresenter {
         this.weatherView = weatherView;
     }
 
-    public WeatherPresenter(IDialogFragment dialogFragment) {
-        this.dialogFragment = dialogFragment;
-    }
-
     @Override
-    public void getWeatherData() {
+    public void updateWeatherData() {
+
+        if (stringIDCities == "") return;
 
         weatherObjectList.clear();
         WeatherService api = new NetworkModule().weatherService;
-        Disposable disposable = api.getWeather(stringIDCitys, "metric", "ae0e174643a1c579b63d27dbe6279127")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::addToWeatherList, Throwable::printStackTrace);
+
+        Disposable disposable =
+                api.getWeatherList(stringIDCities, "metric", "ae0e174643a1c579b63d27dbe6279127")
+                        .subscribeOn(Schedulers.io())
+                        .doOnError(err -> weatherView.showErrorCode(err))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::addWeatherUpdateToList, Throwable -> weatherView.showErrorCode(Throwable));
 
 
     }
@@ -47,58 +47,91 @@ public class WeatherPresenter implements IWeatherPresenter {
     public void deleteWeatherCity(int position) {
 
         weatherObjectList.remove(position);
-        String[] cities = stringIDCitys.split(",");
-        stringIDCitys = "";
+        String[] cities = stringIDCities.split(",");
+        stringIDCities = "";
 
         if (position != 0) {
             for (int i = 0; i < cities.length; i++) {
-                if ((i == 0) && (i != position)) stringIDCitys += cities[i];
-                else if (i != position) stringIDCitys += "," + cities[i];
+                if ((i == 0) && (i != position)) stringIDCities += cities[i];
+                else if (i != position) stringIDCities += "," + cities[i];
             }
         }
 
         if (position == 0) {
             for (int i = position + 1; i < cities.length; i++) {
-                if (i == position + 1) stringIDCitys += cities[i];
-                else stringIDCitys += "," + cities[i];
+                if (i == position + 1) stringIDCities += cities[i];
+                else stringIDCities += "," + cities[i];
 
             }
         }
 
 
-        getWeatherData();
+        this.updateWeatherData();
     }
 
     @Override
-    public void addWeaherCity(String newCityID) {
+    public void addWeatherCity(String addCityName) {
 
-        if (stringIDCitys != "") stringIDCitys += "," + newCityID;
-        else stringIDCitys += newCityID;
+        for (WeatherCity weatherCity : weatherObjectList) {
+            if (weatherCity.getNameCity().toLowerCase().equals(addCityName.toLowerCase())) {
+                weatherView.showMessage(weatherCity.getNameCity() + " already added");
+                return;
+            }
+        }
+
+
+        WeatherService api = new NetworkModule().weatherService;
+        Disposable disposable =
+                api.getWeatherUnit(addCityName, "ae0e174643a1c579b63d27dbe6279127")
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::addWeatherUnitCityToList, Throwable -> weatherView.showErrorCode(Throwable));
 
     }
 
     @Override
     public String getIDsString() {
-        return stringIDCitys;
+        return stringIDCities;
     }
 
     @Override
     public void setIDsString(String stringIDCitys) {
-        this.stringIDCitys = stringIDCitys;
+        this.stringIDCities = stringIDCitys;
     }
 
-    private void addToWeatherList(WeatherObject weatherObject) {
+    private void addWeatherUpdateToList(WeatherObjectList weatherObjectList) {
 
-        for (int i = 0; i < weatherObject.getList().size(); i++) {
+        for (int i = 0; i < weatherObjectList.getList().size(); i++) {
 
-            weatherObjectList.add(new WeatherCity(weatherObject.getList().get(i).getName(),
-                            Double.toString(Math.round(weatherObject.getList().get(i).getMain().getTemp() - 273)),
-                            "http://openweathermap.org/img/w/" + weatherObject.getList().get(i).getWeather().get(0).getIcon() + ".png",
-                            weatherObject.getList().get(i).getWind().getSpeed().toString(),
-                            weatherObject.getList().get(i).getMain().getPressure().toString()));
+            this.weatherObjectList.add(new WeatherCity(weatherObjectList.getList().get(i).getName(),
+                    Double.toString(Math.round(weatherObjectList.getList().get(i).getMain().getTemp() - 273)),
+                    "http://openweathermap.org/img/w/" + weatherObjectList.getList().get(i).getWeather().get(0).getIcon() + ".png",
+                    weatherObjectList.getList().get(i).getWind().getSpeed().toString(),
+                    Double.toString(Math.round(weatherObjectList.getList().get(i).getMain().getPressure() / 1.333))));
 
         }
+        weatherView.showWeatherData(this.weatherObjectList);
+
+
+    }
+
+    private void addWeatherUnitCityToList(WeatherObjectUnit weatherObjectUnit) {
+        weatherObjectList.add(new WeatherCity(weatherObjectUnit.getName(),
+                Double.toString(Math.round(weatherObjectUnit.getMain().getTemp() - 273)),
+                "http://openweathermap.org/img/w/" + weatherObjectUnit.getWeather().get(0).getIcon() + ".png",
+                weatherObjectUnit.getWind().getSpeed().toString(),
+                Double.toString(Math.round(weatherObjectUnit.getMain().getPressure() / 1.333))));
+
         weatherView.showWeatherData(weatherObjectList);
+        addCityIdToString(weatherObjectUnit.getId().toString());
+
+
+    }
+
+    static private void addCityIdToString(String cityID) {
+
+        if (stringIDCities != "") stringIDCities += "," + cityID;
+        else stringIDCities += cityID;
 
     }
 }

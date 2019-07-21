@@ -20,13 +20,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.WeatherViewHolder>
     List<WeatherCity> weatherCities;
     private LayoutInflater inflater;
     private Context context;
-    private  final OnItemClickListener clickListener;
+    private final OnItemClickListener clickListener;
 
     public RVAdapter(Context context, List<WeatherCity> weatherCities, OnItemClickListener clickListener) {
         this.weatherCities = weatherCities;
-        this.context=context;
+        this.context = context;
         this.inflater = LayoutInflater.from(context);
-        this.clickListener=clickListener;
+        this.clickListener = clickListener;
 
 
     }
@@ -39,7 +39,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.WeatherViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull WeatherViewHolder holder, int position) {
-    holder.bind(weatherCities.get(position));
+        holder.bind(weatherCities.get(position));
     }
 
     @Override
@@ -51,10 +51,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.WeatherViewHolder>
         void onItemClick(WeatherCity weatherCity);
     }
 
-     class WeatherViewHolder extends RecyclerView.ViewHolder {
-        private  ImageView iconWeather;
-        private  TextView nameCity;
-        private  TextView tempCity;
+    class WeatherViewHolder extends RecyclerView.ViewHolder {
+        private ImageView iconWeather;
+        private TextView nameCity;
+        private TextView tempCity;
 
         public WeatherViewHolder(@NonNull View itemView, @NonNull OnItemClickListener listener) {
             super(itemView);
@@ -64,21 +64,21 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.WeatherViewHolder>
                     listener.onItemClick(weatherCities.get(position));
                 }
             });
-            iconWeather=itemView.findViewById(R.id.iconWeather);
-            nameCity=itemView.findViewById(R.id.nameCity);
-            tempCity=itemView.findViewById(R.id.tempCity);
+            iconWeather = itemView.findViewById(R.id.iconWeather);
+            nameCity = itemView.findViewById(R.id.nameCity);
+            tempCity = itemView.findViewById(R.id.tempCity);
 
 
         }
 
 
-         public void bind(WeatherCity weatherCity) {
-             Glide
-                     .with(context)
-                     .load(weatherCity.getImageCity())
-                     .into(iconWeather);
+        public void bind(WeatherCity weatherCity) {
+            Glide
+                    .with(context)
+                    .load(weatherCity.getImageCity())
+                    .into(iconWeather);
             nameCity.setText(weatherCity.getNameCity());
-            tempCity.setText(weatherCity.getTemp()+"°C");
-         }
-     }
+            tempCity.setText(weatherCity.getTemp() + "°C");
+        }
+    }
 }

@@ -3,14 +3,14 @@ package com.example.weathertest.ResponseDAO;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class WeatherObject {
+public class WeatherObjectList {
 
     @SerializedName("cnt")
     @Expose
     private Integer cnt;
     @SerializedName("list")
     @Expose
-    private java.util.List<List> list = null;
+    private java.util.List<WeatherObjectUnit> list = null;
 
     public Integer getCnt() {
         return cnt;
@@ -20,11 +20,11 @@ public class WeatherObject {
         this.cnt = cnt;
     }
 
-    public java.util.List<List> getList() {
+    public java.util.List<WeatherObjectUnit> getList() {
         return list;
     }
 
-    public void setList(java.util.List<List> list) {
+    public void setList(java.util.List<WeatherObjectUnit> list) {
         this.list = list;
     }
 

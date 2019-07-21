@@ -1,14 +1,16 @@
 package com.example.weathertest.Presenter;
 
 public interface IWeatherPresenter {
-    void getWeatherData();
+
+    void updateWeatherData();
 
     void deleteWeatherCity(int position);
 
-    void addWeaherCity(String newCityID);
+    void addWeatherCity(String addCityName);
 
     String getIDsString();
 
     void setIDsString(String stringIDCitys);
+
 
 }
