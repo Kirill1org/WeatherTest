@@ -6,6 +6,6 @@
     <string name="title_activity_main_screen">Weather Test</string>
     <string name="id_add">Add City</string>
     <string name="cancel">Cancel</string>
-    <string name="enter_id">Enter ID of city</string>
+    <string name="enter_id">Enter name of city</string>
 
 </resources>
