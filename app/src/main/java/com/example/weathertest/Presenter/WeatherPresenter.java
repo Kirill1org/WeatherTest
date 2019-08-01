@@ -16,6 +16,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class WeatherPresenter implements IWeatherPresenter {
 
+    private static final String API_KEY="ae0e174643a1c579b63d27dbe6279127";
+
     private IWeatherView weatherView;
     private static String stringIDCities;
 
@@ -33,12 +35,12 @@ public class WeatherPresenter implements IWeatherPresenter {
         weatherObjectList.clear();
         WeatherService api = new NetworkModule().weatherService;
 
-        Disposable disposable =
-                api.getWeatherList(stringIDCities, "metric", "ae0e174643a1c579b63d27dbe6279127")
-                        .subscribeOn(Schedulers.io())
-                        .doOnError(err -> weatherView.showErrorCode(err))
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::addWeatherUpdateToList, Throwable -> weatherView.showErrorCode(Throwable));
+
+        api.getWeatherList(stringIDCities, "metric", API_KEY)
+                .subscribeOn(Schedulers.io())
+                .doOnError(err -> weatherView.showErrorCode(err))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::addWeatherUpdateToList, Throwable -> weatherView.showErrorCode(Throwable));
 
 
     }
@@ -81,11 +83,11 @@ public class WeatherPresenter implements IWeatherPresenter {
 
 
         WeatherService api = new NetworkModule().weatherService;
-        Disposable disposable =
-                api.getWeatherUnit(addCityName, "ae0e174643a1c579b63d27dbe6279127")
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::addWeatherUnitCityToList, Throwable -> weatherView.showErrorCode(Throwable));
+
+        api.getWeatherUnit(addCityName, API_KEY)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::addWeatherUnitCityToList, Throwable -> weatherView.showErrorCode(Throwable));
 
     }
 
